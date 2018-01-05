@@ -15,6 +15,7 @@ using Dynamo.Models;
 using System.Windows;
 using System.Windows.Media;
 using Dynamo.Controls;
+using Dynamo.Graph;
 
 namespace SampleViewExtension
 {
@@ -25,13 +26,15 @@ namespace SampleViewExtension
 
         public string SelectedNodesText => $"There are {readyParams.CurrentWorkspaceModel.Nodes.ToList().Count()} nodes in the workspace.";
         public List<nodeData> allNodes => getAllNodes();
-        public string CurrentSelection => $"GUID: {guidOfCurrent()}";
+        public List<string> CurrentSelection => guidOfCurrent();
 
         public class nodeData
         {
             public string nickname { get; set; }
             public string creationname { get; set; }
             public string guid { get; set; }
+            public ModelBase theNode { get; set; }
+            public ViewLoadedParams theWSModel { get; set; }
         }
 
         public List<nodeData> getAllNodes()
@@ -43,18 +46,20 @@ namespace SampleViewExtension
                 {
                     nickname = node.NickName,
                     creationname = node.CreationName,
-                    guid = node.AstIdentifierGuid
+                    guid = node.AstIdentifierGuid,
+                    theNode = node,
+                    theWSModel = readyParams
                 });
             }
             return tempNodes;
         }
 
-        public string guidOfCurrent()
+        public List<string> guidOfCurrent()
         {
-            string guids = "";
+            List<string>guids = new List<string>();
             foreach(NodeModel node in readyParams.CurrentWorkspaceModel.CurrentSelection)
             {
-                guids += node.AstIdentifierGuid + "\n";
+                guids.Add(node.AstIdentifierGuid);
             }
             return guids;
         }
@@ -74,8 +79,8 @@ namespace SampleViewExtension
             //checkSelection.PropertyChanged += CurrentWorkspaceModel_PropertyUpdate;
             //var children  = FindVisualChildren<DynamoView>(readyParams.DynamoWindow);
             //var VM = children.First().DataContext as DynamoViewModel;
-            var VM = readyParams.DynamoWindow.DataContext as DynamoViewModel;
-            VM.FitViewCommand.Execute(null);
+            //var VM = readyParams.DynamoWindow.DataContext as DynamoViewModel;
+            //VM.FitViewCommand.Execute(null);
             
         }
 

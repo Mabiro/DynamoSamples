@@ -30,7 +30,8 @@
             ItemsSource="{Binding allNodes}"
             HorizontalAlignment="Left" 
             VerticalAlignment="Top"
-            AutoGenerateColumns="False">
+            AutoGenerateColumns="False"
+            MouseDoubleClick="selectRow">
             <DataGrid.Columns>
                 <DataGridTextColumn 
                   x:Name="nameDisplay" 
@@ -49,14 +50,21 @@
                   Binding="{Binding Path=guid}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock 
+        <DataGrid 
+            x:Name="selectedGUIDs" 
             Grid.Row="2" 
             Grid.RowSpan="1"
-            HorizontalAlignment="Stretch" 
-            Text="{Binding CurrentSelection}" 
-            FontWeight="Bold" 
-            FontSize="24"
-        />
+            ItemsSource="{Binding CurrentSelection}"
+            HorizontalAlignment="Left" 
+            VerticalAlignment="Top">
+            <DataGrid.Columns>
+                <DataGridTextColumn 
+                  x:Name="guids" 
+                  Header="GUIDS of Selected Nodes" MinWidth="200" 
+                  IsReadOnly="True" 
+                  Binding="{Binding Path=.}"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
     
 </Window>

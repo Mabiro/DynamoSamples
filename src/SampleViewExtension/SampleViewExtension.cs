@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Dynamo.Wpf.Extensions;
+using Dynamo.Core;
 
 namespace SampleViewExtension
 {
@@ -36,10 +37,10 @@ namespace SampleViewExtension
             // Save a reference to your loaded parameters.
             // You'll need these later when you want to use
             // the supplied workspaces
-
             sampleMenuItem = new MenuItem {Header = "Show View Extension Sample Window"};
             sampleMenuItem.Click += (sender, args) =>
             {
+ 
                 var viewModel = new SampleWindowViewModel(p);
                 var window = new SampleWindow
                 {
@@ -48,7 +49,9 @@ namespace SampleViewExtension
 
                     // Set the owner of the window to the Dynamo window.
                     Owner = p.DynamoWindow
+                    
                 };
+     
 
                 window.Left = window.Owner.Left + 400;
                 window.Top = window.Owner.Top + 200;

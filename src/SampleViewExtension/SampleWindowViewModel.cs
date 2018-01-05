@@ -61,22 +61,33 @@ namespace SampleViewExtension
         public SampleWindowViewModel(ReadyParams p)
         {
             readyParams = p as ViewLoadedParams;
-            //WorkspaceModel checkSelection = p.CurrentWorkspaceModel as WorkspaceModel;
+            WorkspaceModel checkSelection = p.CurrentWorkspaceModel as WorkspaceModel;
             p.CurrentWorkspaceModel.NodeAdded += CurrentWorkspaceModel_NodesChanged;
             p.CurrentWorkspaceModel.NodeRemoved += CurrentWorkspaceModel_NodesChanged;
             readyParams.SelectionCollectionChanged += ReadyParams_SelectionCollectionChanged;
-            
-            foreach (NodeModel node in p.CurrentWorkspaceModel.Nodes)
+            foreach (NodeModel node in readyParams.CurrentWorkspaceModel.Nodes)
             {
-                node.Modified += CurrentWorkspaceModel_NodesChanged;
-                node.UpdateASTCollection += CurrentWorkspaceModel_NodesChanged;
+                node.PropertyChanged += Node_PropertyChanged; 
+                //node.Modified += CurrentWorkspaceModel_NodesChanged;
+                //node.UpdateASTCollection += CurrentWorkspaceModel_NodesChanged;
             }
-            //checkSelection.PropertyChanged += CurrentWorkspaceModel_WorkspaceChange;
+            //checkSelection.PropertyChanged += CurrentWorkspaceModel_PropertyUpdate;
             //var children  = FindVisualChildren<DynamoView>(readyParams.DynamoWindow);
             //var VM = children.First().DataContext as DynamoViewModel;
             var VM = readyParams.DynamoWindow.DataContext as DynamoViewModel;
             VM.FitViewCommand.Execute(null);
             
+        }
+
+        private void Node_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            PropertyChangedEventArgs eventArgs = e as PropertyChangedEventArgs;
+            string changedProperty = eventArgs.PropertyName;
+
+            if (changedProperty == "NickName")
+            {
+                RaisePropertyChanged("allNodes");
+            }
         }
 
         public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
@@ -104,17 +115,18 @@ namespace SampleViewExtension
             RaisePropertyChanged("CurrentSelection");
         }
 
-        /*private void CurrentWorkspaceModel_WorkspaceChange(object s, EventArgs e)
+        /*private void CurrentWorkspaceModel_PropertyUpdate(object s, EventArgs e)
         {
             PropertyChangedEventArgs eventArgs = e as PropertyChangedEventArgs;
             string changedProperty = eventArgs.PropertyName;
 
-            if (changedProperty == "CurrentSelection")
+            if (changedProperty == "NickName")
             {
-                RaisePropertyChanged("CurrentSelection");
+                RaisePropertyChanged("allNodes");
             }
             
         }*/
+
         private void CurrentWorkspaceModel_NodesChanged(NodeModel obj)
         {
             RaisePropertyChanged("SelectedNodesText");
@@ -126,7 +138,7 @@ namespace SampleViewExtension
             WorkspaceModel checkSelection = readyParams.CurrentWorkspaceModel as WorkspaceModel;
             readyParams.CurrentWorkspaceModel.NodeAdded -= CurrentWorkspaceModel_NodesChanged;
             readyParams.CurrentWorkspaceModel.NodeRemoved -= CurrentWorkspaceModel_NodesChanged;
-            //checkSelection.PropertyChanged -= CurrentWorkspaceModel_WorkspaceChange;
+            //checkSelection.PropertyChanged -= CurrentWorkspaceModel_PropertyUpdate;
             foreach (NodeModel node in readyParams.CurrentWorkspaceModel.Nodes)
             {
                 node.Modified -= CurrentWorkspaceModel_NodesChanged;
